@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - АкваСБор</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Боковая панель */
+        .sidebar {
+            width: 280px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 0 2rem;
+        }
+
+        .logo h1 {
+            color: #2c5aa0;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 1rem 2rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-left-color: #4ade80;
+        }
+
+        .nav-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+
+        /* Основной контент */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .content-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #2c5aa0;
+        }
+
+        /* Кнопки */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #2c5aa0;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e3d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 90, 160, 0.4);
+        }
+
+        .btn-success {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        /* Статистические карточки */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Формы */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+        }
+
+        .form-control.is-invalid {
+            border-color: #ef4444;
+        }
+
+        .form-control.is-valid {
+            border-color: #22c55e;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Загрузка изображений */
+        .image-upload-area {
+            border: 3px dashed #ccc;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            position: relative;
+        }
+
+        .image-upload-area:hover {
+            border-color: #2c5aa0;
+            background: #f0f8ff;
+        }
+
+        .image-upload-area.dragover {
+            border-color: #4ade80;
+            background: #f0fff0;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .image-upload-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .preview-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-placeholder {
+            width: 100%;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            color: #666;
+            font-size: 2rem;
+        }
+
+        .preview-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .preview-select {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .preview-selected {
+            border: 3px solid #22c55e;
+        }
+
+        .preview-info {
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Галерея изображений */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            background: white;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .gallery-placeholder {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            color: #666;
+            font-size: 3rem;
+        }
+
+        .gallery-info {
+            padding: 1rem;
+        }
+
+        .gallery-name {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-details {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .gallery-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .gallery-actions .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Таблицы */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead {
+            background: #2c5aa0;
+            color: white;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .table-actions .btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .product-image-cell {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .product-image-placeholder {
+            width: 60px;
+            height: 60px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            position: relative;
+            background: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #2c5aa0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        /* Редактор контента */
+        .content-editor {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            min-height: 300px;
+            background: white;
+        }
+
+        .editor-toolbar {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .editor-btn {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 0.5rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .editor-btn:hover {
+            background: #e9ecef;
+        }
+
+        .editor-btn.active {
+            background: #2c5aa0;
+            color: white;
+        }
+
+        .editor-content {
+            padding: 1rem;
+            min-height: 250px;
+            outline: none;
+        }
+
+        /* Фильтры и поиск */
+        .filters-bar {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .filter-select {
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            min-width: 150px;
+        }
+
+        /* Status badges */
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 1rem 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 10001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1000;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Боковая панель -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <h1>🐠 АкваСБор</h1>
+                <p>Админ-панель</p>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-section="dashboard">
+                            <span class="nav-icon">📊</span>
+                            Панель управления
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="products">
+                            <span class="nav-icon">🌿</span>
+                            Управление товарами
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="gallery">
+                            <span class="nav-icon">🖼️</span>
+                            Галерея изображений
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="orders">
+                            <span class="nav-icon">📦</span>
+                            Заказы
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="settings">
+                            <span class="nav-icon">⚙️</span>
+                            Настройки
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="index.html" class="nav-link">
+                            <span class="nav-icon">🏠</span>
+                            На сайт
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="products.html" class="nav-link">
+                            <span class="nav-icon">🛒</span>
+                            Магазин
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Панель управления -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1 class="section-title">📊 Панель управления</h1>
+                    <div>
+                        <button class="btn btn-primary" onclick="refreshDashboard()">
+                            🔄 Обновить
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProducts">0</div>
+                        <div class="stat-label">Товаров в каталоге</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalImages">0</div>
+                        <div class="stat-label">Изображений в галерее</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalOrders">156</div>
+                        <div class="stat-label">Всего заказов</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalRevenue">₽127,450</div>
+                        <div class="stat-label">Выручка за месяц</div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>📈 Последняя активность</h3>
+                    <div id="activityLog">
+                        <!-- Будет заполнено автоматически -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Управление товарами -->
+            <section id="products" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">🌿 Управление товарами</h1>
+                    <div>
+                        <button class="btn btn-success" onclick="openProductModal()">
+                            ➕ Добавить товар
+                        </button>
+                        <button class="btn btn-primary" onclick="exportProducts()">
+                            📤 Экспорт
+                        </button>
+                        <button class="btn btn-warning" onclick="syncProducts()">
+                            🔄 Синхронизировать
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" class="search-box" placeholder="🔍 Поиск товаров..." id="productSearch">
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="">Все категории</option>
+                        <option value="plants">🌿 Растения</option>
+                        <option value="equipment">⚙️ Оборудование</option>
+                        <option value="fish">🐟 Рыбки</option>
+                        <option value="food">🍤 Корма</option>
+                        <option value="decor">🪨 Декор</option>
+                    </select>
+                    <select class="filter-select" id="statusFilter">
+                        <option value="">Все статусы</option>
+                        <option value="active">Активные</option>
+                        <option value="inactive">Неактивные</option>
+                        <option value="draft">Черновики</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table class="table" id="productsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Изображение</th>
+                                <th>Название</th>
+                                <th>Категория</th>
+                                <th>Цена</th>
+                                <th>Остаток</th>
+                                <th>Статус</th>
+                                <th>Дата создания</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Товары будут добавлены через JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Галерея изображений -->
+            <section id="gallery" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">🖼️ Галерея изображений</h1>
+                    <div>
+                        <button class="btn btn-success" onclick="openUploadModal()">
+                            ➕ Загрузить изображения
+                        </button>
+                        <button class="btn btn-danger" onclick="clearGallery()">
+                            🗑️ Очистить галерею
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" class="search-box" placeholder="🔍 Поиск изображений..." id="gallerySearch">
+                    <select class="filter-select" id="galleryTypeFilter">
+                        <option value="">Все типы</option>
+                        <option value="product">Товары</option>
+                        <option value="banner">Баннеры</option>
+                        <option value="gallery">Галерея</option>
+                    </select>
+                </div>
+
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Изображения будут добавлены через JS -->
+                </div>
+            </section>
+
+            <!-- Заказы (заглушка) -->
+            <section id="orders" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">📦 Управление заказами</h1>
+                </div>
+                <p>Управление заказами будет реализовано в следующих версиях.</p>
+            </section>
+
+            <!-- Настройки -->
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h1 class="section-title">⚙️ Настройки сайта</h1>
+                    <div>
+                        <button class="btn btn-success" onclick="saveSettings()">
+                            💾 Сохранить настройки
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-section">
+                        <h3>🏢 Основные настройки</h3>
+
+                        <div class="form-group">
+                            <label>Название сайта</label>
+                            <input type="text" class="form-control" id="siteName" value="АкваСБор - Аквариумные растения">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Описание</label>
+                            <textarea class="form-control" id="siteDescription">Лучшие аквариумные растения с доставкой по всей России</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email для заказов</label>
+                            <input type="email" class="form-control" id="orderEmail" value="orders@akvasbor.ru">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Телефон</label>
+                            <input type="tel" class="form-control" id="contactPhone" value="+7 (xxx) xxx-xx-xx">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>🚚 Настройки доставки</h3>
+
+                        <div class="form-group">
+                            <label>Регионы доставки</label>
+                            <textarea class="form-control" id="deliveryRegions">Россия, Беларусь, Казахстан, Киргизия, Армения</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Минимальная сумма заказа (₽)</label>
+                            <input type="number" class="form-control" id="minOrderAmount" value="500">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Стоимость доставки (₽)</label>
+                            <input type="number" class="form-control" id="deliveryCost" value="300">
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Модальное окно товара -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="productModalTitle">Добавить товар</h2>
+                <button class="modal-close" onclick="closeProductModal()">&times;</button>
+            </div>
+
+            <form id="productForm">
+                <input type="hidden" id="editProductId">
+
+                <div class="form-grid">
+                    <div class="form-section">
+                        <h3>📋 Основная информация</h3>
+
+                        <div class="form-group">
+                            <label>Название товара *</label>
+                            <input type="text" class="form-control" id="productName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Категория *</label>
+                            <select class="form-control" id="productCategory" required>
+                                <option value="">Выберите категорию</option>
+                                <option value="plants">🌿 Растения</option>
+                                <option value="equipment">⚙️ Оборудование</option>
+                                <option value="fish">🐟 Рыбки</option>
+                                <option value="food">🍤 Корма</option>
+                                <option value="decor">🪨 Декор</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Цена (₽) *</label>
+                            <input type="number" class="form-control" id="productPrice" min="0" step="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Количество на складе</label>
+                            <input type="number" class="form-control" id="productStock" min="0" value="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Статус</label>
+                            <select class="form-control" id="productStatus">
+                                <option value="active">✅ Активный</option>
+                                <option value="inactive">❌ Неактивный</option>
+                                <option value="draft">📝 Черновик</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Краткое описание</label>
+                            <textarea class="form-control" id="productShortDescription" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>🖼️ Изображение товара</h3>
+
+                        <div class="form-group">
+                            <label>Выберите изображение из галереи</label>
+                            <button type="button" class="btn btn-primary" onclick="openGallerySelector()">
+                                📂 Выбрать из галереи
+                            </button>
+                        </div>
+
+                        <div id="selectedImagePreview" style="margin-top: 1rem;">
+                            <!-- Предпросмотр выбранного изображения -->
+                        </div>
+
+                        <h3 style="margin-top: 2rem;">📊 Характеристики (для растений)</h3>
+
+                        <div class="form-group">
+                            <label>Сложность ухода</label>
+                            <select class="form-control" id="productDifficulty">
+                                <option value="">Не указана</option>
+                                <option value="easy">Легкая</option>
+                                <option value="medium">Средняя</option>
+                                <option value="hard">Сложная</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Освещение</label>
+                            <select class="form-control" id="productLighting">
+                                <option value="">Не указано</option>
+                                <option value="low">Слабое</option>
+                                <option value="medium">Умеренное</option>
+                                <option value="high">Яркое</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Размер (см)</label>
+                            <input type="text" class="form-control" id="productSize" placeholder="Например: 10-30">
+                        </div>
+
+                        <div class="form-group">
+                            <label>CO2</label>
+                            <select class="form-control" id="productCO2">
+                                <option value="">Не указано</option>
+                                <option value="not-required">Не требуется</option>
+                                <option value="recommended">Рекомендуется</option>
+                                <option value="required">Обязательно</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section" style="grid-column: 1 / -1; margin-top: 2rem;">
+                    <h3>📝 Полное описание</h3>
+
+                    <div class="content-editor">
+                        <div class="editor-toolbar">
+                            <button type="button" class="editor-btn" onclick="formatText('bold')"><b>B</b></button>
+                            <button type="button" class="editor-btn" onclick="formatText('italic')"><i>I</i></button>
+                            <button type="button" class="editor-btn" onclick="formatText('underline')"><u>U</u></button>
+                            <button type="button" class="editor-btn" onclick="formatText('insertUnorderedList')">• Список</button>
+                            <button type="button" class="editor-btn" onclick="formatText('insertOrderedList')">1. Список</button>
+                        </div>
+                        <div contenteditable="true" id="productFullDescription" class="editor-content" placeholder="Введите подробное описание товара..."></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Отмена</button>
+                    <button type="submit" class="btn btn-success">💾 Сохранить товар</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Модальное окно загрузки изображений -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📤 Загрузка изображений</h2>
+                <button class="modal-close" onclick="closeUploadModal()">&times;</button>
+            </div>
+
+            <div class="image-upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <p><strong>Перетащите изображения сюда или кликните для выбора</strong></p>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">
+                    Поддерживаются: JPG, PNG, GIF, WEBP (до 5MB каждое)
+                </p>
+                <input type="file" multiple accept="image/*" class="image-upload-input" id="uploadInput">
+            </div>
+
+            <div class="form-group" style="margin-top: 2rem;">
+                <label>Тип изображения</label>
+                <select class="form-control" id="uploadType">
+                    <option value="product">Товар</option>
+                    <option value="banner">Баннер</option>
+                    <option value="gallery">Галерея</option>
+                </select>
+            </div>
+
+            <div class="image-preview" id="uploadPreview">
+                <!-- Предпросмотр загружаемых файлов -->
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeUploadModal()">Отмена</button>
+                <button type="button" class="btn btn-success" onclick="uploadImages()" id="uploadBtn" disabled>📤 Загрузить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно выбора изображения из галереи -->
+    <div class="modal" id="gallerySelectorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📂 Выбор изображения из галереи</h2>
+                <button class="modal-close" onclick="closeGallerySelector()">&times;</button>
+            </div>
+
+            <div class="gallery-grid" id="gallerySelectorGrid">
+                <!-- Изображения для выбора -->
+            </div>
+
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                <button type="button" class="btn btn-secondary" onclick="closeGallerySelector()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Глобальные переменные
+        let products = [];
+        let gallery = [];
+        let currentSection = 'dashboard';
+        let editingProductId = null;
+        let selectedProductImage = null;
+        let uploadedFiles = [];
+
+        // Инициализация админки
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAdmin();
+            loadData();
+            updateDashboard();
+        });
+
+        // Инициализация
+        function initializeAdmin() {
+            // Навигация
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') === '#') {
+                        e.preventDefault();
+                        const section = this.getAttribute('data-section');
+                        if (section) {
+                            showSection(section);
+                        }
+                    }
+                });
+            });
+
+            // Поиск и фильтры
+            document.getElementById('productSearch').addEventListener('input', filterProducts);
+            document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+            document.getElementById('statusFilter').addEventListener('change', filterProducts);
+            document.getElementById('gallerySearch').addEventListener('input', filterGallery);
+            document.getElementById('galleryTypeFilter').addEventListener('change', filterGallery);
+
+            // Форма товара
+            document.getElementById('productForm').addEventListener('submit', handleProductSubmit);
+
+            // Загрузка файлов
+            initializeFileUpload();
+
+            // Загрузка настроек
+            loadSettings();
+        }
+
+        // Инициализация загрузки файлов
+        function initializeFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const uploadInput = document.getElementById('uploadInput');
+
+            // Drag & Drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = Array.from(e.dataTransfer.files);
+                handleFileSelection(files);
+            });
+
+            // Click to upload
+            uploadInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                handleFileSelection(files);
+            });
+        }
+
+        // Обработка выбранных файлов
+        function handleFileSelection(files) {
+            uploadedFiles = [];
+            const preview = document.getElementById('uploadPreview');
+            preview.innerHTML = '';
+
+            files.forEach((file, index) => {
+                if (file.type.startsWith('image/') && file.size <= 5 * 1024 * 1024) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const fileData = {
+                            id: Date.now() + index,
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: e.target.result
+                        };
+                        uploadedFiles.push(fileData);
+
+                        const previewItem = document.createElement('div');
+                        previewItem.className = 'preview-item';
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="${file.name}" class="preview-image">
+                            <button class="preview-remove" onclick="removeUploadedFile(${fileData.id})">×</button>
+                            <div class="preview-info">
+                                <div>${file.name}</div>
+                                <div>${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                            </div>
+                        `;
+                        preview.appendChild(previewItem);
+
+                        document.getElementById('uploadBtn').disabled = uploadedFiles.length === 0;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    showNotification(`Файл ${file.name} не поддерживается или слишком большой`, 'error');
+                }
+            });
+        }
+
+        // Удаление файла из загрузки
+        function removeUploadedFile(fileId) {
+            uploadedFiles = uploadedFiles.filter(f => f.id !== fileId);
+            const preview = document.getElementById('uploadPreview');
+            const items = Array.from(preview.children);
+
+            // Обновляем предпросмотр
+            handleFileSelection([]);
+            uploadedFiles.forEach((file, index) => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                previewItem.innerHTML = `
+                    <img src="${file.data}" alt="${file.name}" class="preview-image">
+                    <button class="preview-remove" onclick="removeUploadedFile(${file.id})">×</button>
+                    <div class="preview-info">
+                        <div>${file.name}</div>
+                        <div>${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                    </div>
+                `;
+                preview.appendChild(previewItem);
+            });
+
+            document.getElementById('uploadBtn').disabled = uploadedFiles.length === 0;
+        }
+
+        // Загрузка изображений в галерею
+        function uploadImages() {
+            const type = document.getElementById('uploadType').value;
+
+            uploadedFiles.forEach(file => {
+                const image = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    type: type,
+                    data: file.data,
+                    size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+                    uploadDate: new Date().toLocaleDateString()
+                };
+                gallery.push(image);
+            });
+
+            saveGallery();
+            renderGallery();
+            closeUploadModal();
+            showNotification(`Загружено ${uploadedFiles.length} изображений`, 'success');
+            logActivity(`Загружено ${uploadedFiles.length} изображений в галерею`);
+        }
+
+        // Переключение секций
+        function showSection(sectionName) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            document.getElementById(sectionName).classList.add('active');
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+
+            currentSection = sectionName;
+
+            if (sectionName === 'products') {
+                renderProductsTable();
+            } else if (sectionName === 'gallery') {
+                renderGallery();
+            }
+        }
+
+        // Загрузка данных
+        function loadData() {
+            // Загрузка товаров
+            const savedProducts = localStorage.getItem('adminProducts');
+            if (savedProducts) {
+                products = JSON.parse(savedProducts);
+            }
+
+            // Загрузка галереи
+            const savedGallery = localStorage.getItem('adminGallery');
+            if (savedGallery) {
+                gallery = JSON.parse(savedGallery);
+            }
+        }
+
+        // Сохранение данных
+        function saveProducts() {
+            localStorage.setItem('adminProducts', JSON.stringify(products));
+            updateProductsInStore();
+            updateDashboard();
+        }
+
+        function saveGallery() {
+            localStorage.setItem('adminGallery', JSON.stringify(gallery));
+            updateDashboard();
+        }
+
+        // Синхронизация товаров с магазином
+        function updateProductsInStore() {
+            const storeProducts = products
+                .filter(p => p.status === 'active')
+                .map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    category: p.category,
+                    price: p.price,
+                    image: p.image,
+                    shortDescription: p.shortDescription,
+                    fullDescription: p.fullDescription,
+                    difficulty: p.difficulty,
+                    lighting: p.lighting,
+                    size: p.size,
+                    co2: p.co2,
+                    temperature: p.temperature,
+                    ph: p.ph
+                }));
+
+            localStorage.setItem('storeProducts', JSON.stringify(storeProducts));
+        }
+
+        // Отображение таблицы товаров
+        function renderProductsTable(filteredProducts = null) {
+            const tbody = document.getElementById('productsTableBody');
+            tbody.innerHTML = '';
+
+            const productsToShow = filteredProducts || products;
+
+            productsToShow.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${product.id}</td>
+                    <td>
+                        ${product.image ? 
+                            `<img src="${product.image}" alt="${product.name}" class="product-image-cell">` :
+                            `<div class="product-image-placeholder">📷</div>`
+                        }
+                    </td>
+                    <td>${product.name}</td>
+                    <td>${getCategoryName(product.category)}</td>
+                    <td>₽${product.price}</td>
+                    <td>${product.stock}</td>
+                    <td><span class="status-badge ${product.status}">${getStatusName(product.status)}</span></td>
+                    <td>${product.createdAt || 'Не указана'}</td>
+                    <td class="table-actions">
+                        <button class="btn btn-primary" onclick="editProduct(${product.id})" title="Редактировать">✏️</button>
+                        <button class="btn btn-danger" onclick="deleteProduct(${product.id})" title="Удалить">🗑️</button>
+                        <button class="btn btn-success" onclick="duplicateProduct(${product.id})" title="Дублировать">📋</button>
+                        <button class="btn btn-warning" onclick="toggleProductStatus(${product.id})" title="Изменить статус">
+                            ${product.status === 'active' ? '⏸️' : '▶️'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Отображение галереи
+        function renderGallery(filteredGallery = null) {
+            const container = document.getElementById('galleryGrid');
+            container.innerHTML = '';
+
+            const galleryToShow = filteredGallery || gallery;
+
+            if (galleryToShow.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1 / -1;">Галерея пуста</p>';
+                return;
+            }
+
+            galleryToShow.forEach(image => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.innerHTML = `
+                    <img src="${image.data}" alt="${image.name}" class="gallery-image">
+                    <div class="gallery-info">
+                        <div class="gallery-name">${image.name}</div>
+                        <div class="gallery-details">
+                            Тип: ${getTypeName(image.type)} • Размер: ${image.size}<br>
+                            Загружено: ${image.uploadDate}
+                        </div>
+                        <div class="gallery-actions">
+                            <button class="btn btn-primary" onclick="selectImageForProduct('${image.id}')">Выбрать</button>
+                            <button class="btn btn-danger" onclick="deleteImage('${image.id}')">Удалить</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Фильтрация товаров
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            const filteredProducts = products.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
+                                    (product.shortDescription && product.shortDescription.toLowerCase().includes(searchTerm));
+                const matchesCategory = !categoryFilter || product.category === categoryFilter;
+                const matchesStatus = !statusFilter || product.status === statusFilter;
+
+                return matchesSearch && matchesCategory && matchesStatus;
+            });
+
+            renderProductsTable(filteredProducts);
+        }
+
+        // Фильтрация галереи
+        function filterGallery() {
+            const searchTerm = document.getElementById('gallerySearch').value.toLowerCase();
+            const typeFilter = document.getElementById('galleryTypeFilter').value;
+
+            const filteredGallery = gallery.filter(image => {
+                const matchesSearch = image.name.toLowerCase().includes(searchTerm);
+                const matchesType = !typeFilter || image.type === typeFilter;
+
+                return matchesSearch && matchesType;
+            });
+
+            renderGallery(filteredGallery);
+        }
+
+        // Модальные окна
+        function openProductModal(productId = null) {
+            editingProductId = productId;
+            const modal = document.getElementById('productModal');
+            const title = document.getElementById('productModalTitle');
+
+            if (productId) {
+                const product = products.find(p => p.id === productId);
+                title.textContent = 'Редактировать товар';
+                fillProductForm(product);
+            } else {
+                title.textContent = 'Добавить товар';
+                clearProductForm();
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            editingProductId = null;
+            selectedProductImage = null;
+        }
+
+        function openUploadModal() {
+            document.getElementById('uploadModal').style.display = 'block';
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('uploadPreview').innerHTML = '';
+            document.getElementById('uploadInput').value = '';
+            uploadedFiles = [];
+            document.getElementById('uploadBtn').disabled = true;
+        }
+
+        function openGallerySelector() {
+            const modal = document.getElementById('gallerySelectorModal');
+            const grid = document.getElementById('gallerySelectorGrid');
+
+            grid.innerHTML = '';
+
+            gallery.forEach(image => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.innerHTML = `
+                    <img src="${image.data}" alt="${image.name}" class="gallery-image">
+                    <div class="gallery-info">
+                        <div class="gallery-name">${image.name}</div>
+                        <button class="btn btn-success" onclick="selectProductImage('${image.id}', '${image.data}', '${image.name}')">Выбрать</button>
+                    </div>
+                `;
+                grid.appendChild(item);
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function closeGallerySelector() {
+            document.getElementById('gallerySelectorModal').style.display = 'none';
+        }
+
+        function selectProductImage(imageId, imageData, imageName) {
+            selectedProductImage = imageData;
+
+            const preview = document.getElementById('selectedImagePreview');
+            preview.innerHTML = `
+                <div class="preview-item">
+                    <img src="${imageData}" alt="${imageName}" class="preview-image">
+                    <div class="preview-info">Выбрано: ${imageName}</div>
+                </div>
+            `;
+
+            closeGallerySelector();
+            showNotification('Изображение выбрано', 'success');
+        }
+
+        // Работа с товарами
+        function handleProductSubmit(e) {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                stock: parseInt(document.getElementById('productStock').value) || 0,
+                status: document.getElementById('productStatus').value,
+                image: selectedProductImage,
+                shortDescription: document.getElementById('productShortDescription').value,
+                fullDescription: document.getElementById('productFullDescription').innerHTML,
+                difficulty: document.getElementById('productDifficulty').value,
+                lighting: document.getElementById('productLighting').value,
+                size: document.getElementById('productSize').value,
+                co2: document.getElementById('productCO2').value
+            };
+
+            if (!formData.name || !formData.category || !formData.price) {
+                showNotification('Заполните обязательные поля', 'error');
+                return;
+            }
+
+            if (editingProductId) {
+                const productIndex = products.findIndex(p => p.id === editingProductId);
+                if (productIndex !== -1) {
+                    products[productIndex] = {
+                        ...products[productIndex],
+                        ...formData,
+                        updatedAt: new Date().toLocaleDateString()
+                    };
+                    showNotification('Товар обновлен', 'success');
+                    logActivity(`Обновлен товар: ${formData.name}`);
+                }
+            } else {
+                const newProduct = {
+                    ...formData,
+                    id: Date.now(),
+                    createdAt: new Date().toLocaleDateString()
+                };
+                products.push(newProduct);
+                showNotification('Товар добавлен', 'success');
+                logActivity(`Добавлен новый товар: ${formData.name}`);
+            }
+
+            saveProducts();
+            renderProductsTable();
+            closeProductModal();
+        }
+
+        function fillProductForm(product) {
+            document.getElementById('editProductId').value = product.id || '';
+            document.getElementById('productName').value = product.name || '';
+            document.getElementById('productCategory').value = product.category || '';
+            document.getElementById('productPrice').value = product.price || '';
+            document.getElementById('productStock').value = product.stock || 0;
+            document.getElementById('productStatus').value = product.status || 'active';
+            document.getElementById('productShortDescription').value = product.shortDescription || '';
+            document.getElementById('productFullDescription').innerHTML = product.fullDescription || '';
+            document.getElementById('productDifficulty').value = product.difficulty || '';
+            document.getElementById('productLighting').value = product.lighting || '';
+            document.getElementById('productSize').value = product.size || '';
+            document.getElementById('productCO2').value = product.co2 || '';
+
+            if (product.image) {
+                selectedProductImage = product.image;
+                document.getElementById('selectedImagePreview').innerHTML = `
+                    <div class="preview-item">
+                        <img src="${product.image}" alt="${product.name}" class="preview-image">
+                        <div class="preview-info">Текущее изображение</div>
+                    </div>
+                `;
+            }
+        }
+
+        function clearProductForm() {
+            document.getElementById('productForm').reset();
+            document.getElementById('productFullDescription').innerHTML = '';
+            document.getElementById('editProductId').value = '';
+            document.getElementById('selectedImagePreview').innerHTML = '';
+            selectedProductImage = null;
+        }
+
+        function editProduct(id) {
+            openProductModal(id);
+        }
+
+        function deleteProduct(id) {
+            if (confirm('Удалить товар?')) {
+                const productName = products.find(p => p.id === id)?.name;
+                products = products.filter(p => p.id !== id);
+                saveProducts();
+                renderProductsTable();
+                showNotification('Товар удален', 'success');
+                logActivity(`Удален товар: ${productName}`);
+            }
+        }
+
+        function duplicateProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                const newProduct = {
+                    ...product,
+                    id: Date.now(),
+                    name: product.name + ' (копия)',
+                    status: 'draft',
+                    createdAt: new Date().toLocaleDateString()
+                };
+                products.push(newProduct);
+                saveProducts();
+                renderProductsTable();
+                showNotification('Товар скопирован', 'success');
+                logActivity(`Скопирован товар: ${product.name}`);
+            }
+        }
+
+        function toggleProductStatus(id) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                product.status = product.status === 'active' ? 'inactive' : 'active';
+                saveProducts();
+                renderProductsTable();
+                showNotification(`Статус изменен`, 'success');
+                logActivity(`Изменен статус товара: ${product.name}`);
+            }
+        }
+
+        function deleteImage(imageId) {
+            if (confirm('Удалить изображение?')) {
+                const image = gallery.find(img => img.id == imageId);
+                gallery = gallery.filter(img => img.id != imageId);
+                saveGallery();
+                renderGallery();
+                showNotification('Изображение удалено', 'success');
+                logActivity(`Удалено изображение: ${image?.name}`);
+            }
+        }
+
+        function clearGallery() {
+            if (confirm('Очистить всю галерею? Это действие нельзя отменить!')) {
+                gallery = [];
+                saveGallery();
+                renderGallery();
+                showNotification('Галерея очищена', 'warning');
+                logActivity('Очищена галерея изображений');
+            }
+        }
+
+        // Дополнительные функции
+        function syncProducts() {
+            updateProductsInStore();
+            showNotification('Синхронизация завершена', 'success');
+            logActivity('Выполнена синхронизация товаров');
+        }
+
+        function exportProducts() {
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "ID,Название,Категория,Цена,Остаток,Статус\n"
+                + products.map(p => `${p.id},"${p.name}","${p.category}",${p.price},${p.stock},"${p.status}"`).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `products_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Экспорт завершен', 'success');
+            logActivity('Экспортированы товары в CSV');
+        }
+
+        function updateDashboard() {
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('totalImages').textContent = gallery.length;
+        }
+
+        function refreshDashboard() {
+            updateDashboard();
+            showNotification('Данные обновлены', 'success');
+        }
+
+        // Система логирования
+        let activityLog = JSON.parse(localStorage.getItem('adminActivityLog') || '[]');
+
+        function logActivity(message) {
+            const logEntry = {
+                message,
+                timestamp: new Date().toLocaleString()
+            };
+
+            activityLog.unshift(logEntry);
+
+            // Оставляем только последние 20 записей
+            if (activityLog.length > 20) {
+                activityLog = activityLog.slice(0, 20);
+            }
+
+            localStorage.setItem('adminActivityLog', JSON.stringify(activityLog));
+            updateActivityLog();
+        }
+
+        function updateActivityLog() {
+            const container = document.getElementById('activityLog');
+            if (!container) return;
+
+            if (activityLog.length === 0) {
+                container.innerHTML = '<p style="color: #666;">Активность отсутствует</p>';
+                return;
+            }
+
+            container.innerHTML = activityLog.slice(0, 10).map(entry => `
+                <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                    <div style="font-weight: 500;">${entry.message}</div>
+                    <div style="font-size: 0.8rem; color: #666;">${entry.timestamp}</div>
+                </div>
+            `).join('');
+        }
+
+        // Настройки
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('siteSettings');
+            if (savedSettings) {
+                const settings = JSON.parse(savedSettings);
+                document.getElementById('siteName').value = settings.siteName || '';
+                document.getElementById('siteDescription').value = settings.description || '';
+                document.getElementById('orderEmail').value = settings.orderEmail || '';
+                document.getElementById('contactPhone').value = settings.contactPhone || '';
+                document.getElementById('deliveryRegions').value = settings.deliveryRegions || '';
+                document.getElementById('minOrderAmount').value = settings.minOrderAmount || '';
+                document.getElementById('deliveryCost').value = settings.deliveryCost || '';
+            }
+        }
+
+        function saveSettings() {
+            const settings = {
+                siteName: document.getElementById('siteName').value,
+                description: document.getElementById('siteDescription').value,
+                orderEmail: document.getElementById('orderEmail').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                deliveryRegions: document.getElementById('deliveryRegions').value,
+                minOrderAmount: parseInt(document.getElementById('minOrderAmount').value),
+                deliveryCost: parseInt(document.getElementById('deliveryCost').value)
+            };
+
+            localStorage.setItem('siteSettings', JSON.stringify(settings));
+            showNotification('Настройки сохранены', 'success');
+            logActivity('Обновлены настройки сайта');
+        }
+
+        // Редактор контента
+        function formatText(command, value = null) {
+            document.execCommand(command, false, value);
+            document.getElementById('productFullDescription').focus();
+        }
+
+        // Вспомогательные функции
+        function getCategoryName(category) {
+            const categories = {
+                plants: '🌿 Растения',
+                equipment: '⚙️ Оборудование',
+                fish: '🐟 Рыбки',
+                food: '🍤 Корма',
+                decor: '🪨 Декор'
+            };
+            return categories[category] || category;
+        }
+
+        function getStatusName(status) {
+            const statuses = {
+                active: 'Активный',
+                inactive: 'Неактивный',
+                draft: 'Черновик'
+            };
+            return statuses[status] || status;
+        }
+
+        function getTypeName(type) {
+            const types = {
+                product: 'Товар',
+                banner: 'Баннер',
+                gallery: 'Галерея'
+            };
+            return types[type] || type;
+        }
+
+        // Уведомления
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type} show`;
+            notification.innerHTML = `
+                <strong>${type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '✅'}</strong>
+                ${message}
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Закрытие модальных окон
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Мобильное меню
+        if (window.innerWidth <= 1024) {
+            const mobileButton = document.createElement('button');
+            mobileButton.innerHTML = '☰';
+            mobileButton.style.cssText = `
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: #2c5aa0;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 0.8rem;
+                font-size: 1.2rem;
+                cursor: pointer;
+            `;
+            mobileButton.onclick = () => document.getElementById('sidebar').classList.toggle('mobile-open');
+            document.body.appendChild(mobileButton);
+        }
+
+        // Инициализируем лог активности при загрузке
+        setTimeout(updateActivityLog, 100);
+
+        console.log('🐠 Админ-панель АкваСБор с галереей загружена');
+    </script>
+</body>
+</html>

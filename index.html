@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">АкваСБор - Аквариумы и их обитатели</title>
+    <meta name="description" id="pageDescription" content="Лучшие аквариумные растения с доставкой по всей России, Беларуси, Казахстану, Киргизии и Армении">
+    <meta name="keywords" id="pageKeywords" content="аквариумные растения, валлиснерия, анубиас, эхинодорус, аквариумистика">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Уведомления */
+        .notification-banner {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+            text-align: center;
+            padding: 0.8rem;
+            position: relative;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .notification-banner.hidden {
+            display: none;
+        }
+
+        .notification-close {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c5aa0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #2c5aa0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: #2c5aa0;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #2c5aa0;
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,400 C300,350 600,450 1200,400 L1200,600 L0,600 Z" fill="rgba(255,255,255,0.05)"/></svg>') no-repeat center bottom;
+            background-size: cover;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .delivery-info {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 1s ease-out 0.4s both;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .delivery-info h3 {
+            color: #4ade80;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .delivery-regions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .region-flag {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+            animation: fadeInUp 1s ease-out 0.6s both;
+            position: relative;
+            overflow: hidden;
+            font-size: 1.1rem;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.6);
+        }
+
+        .features {
+            padding: 4rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid #4ade80;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+        }
+
+        .feature-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .feature-icon-placeholder {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            color: #2c5aa0;
+            margin-bottom: 1rem;
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 3rem 0;
+            margin: 2rem 0;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .community-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4rem 0;
+            margin: 2rem 0;
+            border-radius: 20px;
+        }
+
+        .community-activities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .activity-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .activity-item:hover::before {
+            left: 100%;
+        }
+
+        .activity-item:hover {
+            transform: scale(1.05);
+        }
+
+        .quick-products {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 0;
+            margin: 2rem 0;
+            border-radius: 20px;
+        }
+
+        .quick-products h2 {
+            text-align: center;
+            color: #2c5aa0;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .products-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .product-preview {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .product-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            transition: left 0.6s;
+            z-index: 1;
+        }
+
+        .product-preview:hover::before {
+            left: 100%;
+        }
+
+        .product-preview:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            height: 200px;
+            overflow: hidden;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-preview:hover .product-image img {
+            transform: scale(1.1);
+        }
+
+        .product-image-placeholder {
+            font-size: 4rem;
+            color: #ccc;
+        }
+
+        .product-preview-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .product-preview h4 {
+            color: #2c5aa0;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-preview .price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #22c55e;
+        }
+
+        .view-all-btn {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .view-all-btn a {
+            display: inline-block;
+            background: #2c5aa0;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+
+        .view-all-btn a:hover {
+            background: #1e3d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 90, 160, 0.4);
+        }
+
+        .gallery {
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .gallery h2 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            background: rgba(255, 255, 255, 0.1);
+            height: 200px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .gallery-placeholder {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .contact-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem 0;
+            margin: 2rem 0;
+            border-radius: 20px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            border-left: 4px solid #4ade80;
+        }
+
+        .contact-card h4 {
+            color: #2c5aa0;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .contact-info {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .contact-info a {
+            color: #2c5aa0;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #4ade80;
+            margin-bottom: 1rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s, transform 0.3s;
+            text-decoration: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-links a:hover {
+            color: #4ade80;
+            transform: translateY(-3px);
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #4ade80;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2c5aa0;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: #1e3d6f;
+            transform: translateY(-3px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                padding: 2rem;
+                display: none;
+                border-radius: 0 0 20px 20px;
+            }
+
+            .nav-links.mobile-open {
+                display: flex;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                color: #2c5aa0;
+                cursor: pointer;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .delivery-regions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .products-preview {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card,
+            .activity-item {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Уведомление о новостях/акциях -->
+    <div class="notification-banner" id="notificationBanner">
+        <span id="notificationText">🎉 Новые поступления аквариумных растений! Скидка 15% на первый заказ</span>
+        <button class="notification-close" onclick="hideNotification()">&times;</button>
+    </div>
+
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <span id="siteLogo">🐠</span>
+                    <span id="siteName">АкваСБор</span>
+                </div>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" style="display: none;">☰</button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home" class="active">Главная</a></li>
+                    <li><a href="products.html">🌿 <span id="navPlantsText">Растения</span></a></li>
+                    <li><a href="#gallery">Галерея</a></li>
+                    <li><a href="#about">О нас</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                    <li><a href="admin.html" style="color: #ef4444;">Админка</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="container">
+                <h1 id="heroTitle">АкваСБор</h1>
+                <p id="heroSubtitle">Аквариумы и их обитатели - ваш мир подводной красоты</p>
+
+                <div class="delivery-info">
+                    <h3>
+                        <span>🍀</span>
+                        <span id="deliveryTitle">Доставка по всей РОССИИ, БЕЛАРУСЬ, КАЗАХСТАН, КИРГИЗИЯ, АРМЕНИЯ</span>
+                        <span>✅</span>
+                    </h3>
+                    <p id="deliveryDescription">Быстрая и надежная доставка аквариумного оборудования и обитателей</p>
+
+                    <div class="delivery-regions" id="deliveryRegions">
+                        <div class="region-flag">🇷🇺 Россия</div>
+                        <div class="region-flag">🇧🇾 Беларусь</div>
+                        <div class="region-flag">🇰🇿 Казахстан</div>
+                        <div class="region-flag">🇰🇬 Киргизия</div>
+                        <div class="region-flag">🇦🇲 Армения</div>
+                    </div>
+                </div>
+
+                <a href="products.html" class="cta-button" id="ctaButton">
+                    🌿 <span id="ctaText">Посмотреть растения</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Статистика -->
+    <section class="stats-section">
+        <div class="container">
+            <h2 style="color: white; text-align: center; font-size: 2.5rem; margin-bottom: 1rem;">
+                📊 Наши достижения
+            </h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="statProducts">47</div>
+                    <div class="stat-label">Видов растений</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statOrders">892</div>
+                    <div class="stat-label">Довольных клиентов</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statDelivery">5</div>
+                    <div class="stat-label">Стран доставки</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statExperience">3</div>
+                    <div class="stat-label">Года опыта</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="about">
+        <div class="container">
+            <h2 style="text-align: center; color: white; font-size: 2.5rem; margin-bottom: 2rem;">
+                Добро пожаловать в наше сообщество!
+            </h2>
+            <p style="text-align: center; color: white; font-size: 1.2rem; margin-bottom: 2rem;" id="welcomeText">
+                Доброго времени суток, спасибо Вам за интерес к нашему сообществу!<br>
+                Наша группа полезна и интересна всем, кто занимается аквариумистикой
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" id="featureIcon1">
+                        <div class="feature-icon-placeholder">🌿</div>
+                    </div>
+                    <h3>Аквариумные растения</h3>
+                    <p id="feature1Text">Широкий выбор живых растений для создания естественной экосистемы</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" id="featureIcon2">
+                        <div class="feature-icon-placeholder">💚</div>
+                    </div>
+                    <h3>Высокое качество</h3>
+                    <p id="feature2Text">Здоровые растения, выращенные в оптимальных условиях</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon" id="featureIcon3">
+                        <div class="feature-icon-placeholder">🚀</div>
+                    </div>
+                    <h3>Быстрая доставка</h3>
+                    <p id="feature3Text">Специальная упаковка для сохранности растений при транспортировке</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="quick-products">
+        <div class="container">
+            <h2 id="productsTitle">🌿 Популярные растения</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: #666;" id="productsSubtitle">
+                Самые востребованные аквариумные растения для вашего подводного сада
+            </p>
+
+            <div class="products-preview" id="productsPreview">
+                <!-- Товары будут загружены динамически -->
+            </div>
+
+            <div class="view-all-btn">
+                <a href="products.html" id="viewAllBtn">🌿 Посмотреть все растения →</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="community-section">
+        <div class="container">
+            <h2 style="text-align: center; color: #2c5aa0; font-size: 2.5rem; margin-bottom: 2rem;" id="communityTitle">
+                Общение об аквариумистике
+            </h2>
+            <p style="text-align: center; margin-bottom: 2rem;" id="communitySubtitle">
+                У нас можно и нужно делиться своими:
+            </p>
+
+            <div class="community-activities">
+                <div class="activity-item">
+                    <h4>📸 Фотографии питомцев</h4>
+                    <p>Покажите своих любимых рыбок и получите советы от экспертов</p>
+                </div>
+                <div class="activity-item">
+                    <h4>🎨 Оформление аквариума</h4>
+                    <p>Поделитесь уникальным дизайном вашего подводного мира</p>
+                </div>
+                <div class="activity-item">
+                    <h4>📚 Аквариумные истории</h4>
+                    <p>Расскажите интересные случаи из жизни ваших питомцев</p>
+                </div>
+                <div class="activity-item">
+                    <h4>🤝 Новые знакомства</h4>
+                    <p>Найдите единомышленников и обменяйтесь опытом</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <h2 id="galleryTitle">Галерея наших аквариумов</h2>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Галерея будет загружена динамически -->
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <h2 style="text-align: center; color: #2c5aa0; font-size: 2.5rem; margin-bottom: 2rem;">
+                Связаться с нами
+            </h2>
+
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <h4>📧 Email</h4>
+                    <div class="contact-info">
+                        <a href="mailto:info@akvasbor.ru" id="contactEmail">info@akvasbor.ru</a><br>
+                        <a href="mailto:orders@akvasbor.ru" id="ordersEmail">orders@akvasbor.ru</a>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <h4>📞 Телефон</h4>
+                    <div class="contact-info">
+                        <a href="tel:+7" id="contactPhone">+7 (xxx) xxx-xx-xx</a><br>
+                        <small>Пн-Пт: 9:00-18:00 (МСК)</small>
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <h4>🌍 География</h4>
+                    <div class="contact-info" id="deliveryRegionsText">
+                        Россия, Беларусь, Казахстан<br>
+                        Киргизия, Армения
+                    </div>
+                </div>
+
+                <div class="contact-card">
+                    <h4>💰 Условия</h4>
+                    <div class="contact-info">
+                        Минимальный заказ: <span id="minOrderAmount">500 ₽</span><br>
+                        Доставка: <span id="deliveryCost">300 ₽</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Контакты</h3>
+                    <p>Email: <span id="footerEmail">info@akvasbor.ru</span></p>
+                    <p>Телефон: <span id="footerPhone">+7 (xxx) xxx-xx-xx</span></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Доставка</h3>
+                    <p id="footerDelivery">Россия, Беларусь, Казахстан<br>Киргизия, Армения</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Мы в соцсетях</h3>
+                    <div class="social-links" id="socialLinks">
+                        <a href="#" title="ВКонтакте">📘</a>
+                        <a href="#" title="Instagram">📷</a>
+                        <a href="#" title="Telegram">💬</a>
+                        <a href="#" title="YouTube">📺</a>
+                    </div>
+                </div>
+            </div>
+            <p>&copy; 2024 <span id="footerSiteName">АкваСБор</span>. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Кнопка "Наверх" -->
+    <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
+    <!-- Загрузчик -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p>Загрузка...</p>
+    </div>
+
+    <script>
+        // Настройки сайта (загружаются из админки)
+        let siteSettings = {
+            siteName: 'АкваСБор - Аквариумные растения',
+            description: 'Лучшие аквариумные растения с доставкой по всей России',
+            keywords: 'аквариумные растения, валлиснерия, анубиас, эхинодорус, аквариумистика',
+            orderEmail: 'orders@akvasbor.ru',
+            contactPhone: '+7 (xxx) xxx-xx-xx',
+            deliveryRegions: 'Россия, Беларусь, Казахстан, Киргизия, Армения',
+            minOrderAmount: 500,
+            deliveryCost: 300,
+            currency: 'RUB',
+            tax: 20,
+            logo: '🐠',
+            heroTitle: 'АкваСБор',
+            heroSubtitle: 'Аквариумы и их обитатели - ваш мир подводной красоты',
+            ctaText: 'Посмотреть растения',
+            notificationText: '🎉 Новые поступления аквариумных растений! Скидка 15% на первый заказ'
+        };
+
+        // Статистика сайта
+        let siteStats = {
+            totalProducts: 47,
+            totalCustomers: 892,
+            deliveryCountries: 5,
+            yearsExperience: 3
+        };
+
+        // Популярные товары
+        let popularProducts = [];
+        let galleryImages = [];
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            loadDataFromAdmin();
+            updateSiteContent();
+            initializeFeatures();
+            animateStats();
+        });
+
+        // Загрузка данных из админки
+        function loadDataFromAdmin() {
+            // Загрузка товаров
+            const adminProducts = localStorage.getItem('adminProducts');
+            if (adminProducts) {
+                const allProducts = JSON.parse(adminProducts);
+                popularProducts = allProducts
+                    .filter(p => p.status === 'active')
+                    .slice(0, 6)
+                    .map(p => ({
+                        name: p.name,
+                        price: p.price,
+                        image: p.image
+                    }));
+            } else {
+                // Базовые товары
+                popularProducts = [
+                    { name: 'Валлиснерия', price: 250, image: null },
+                    { name: 'Анубиас', price: 450, image: null },
+                    { name: 'Эхинодорус', price: 380, image: null },
+                    { name: 'Яванский мох', price: 180, image: null },
+                    { name: 'Роголистник', price: 150, image: null },
+                    { name: 'Людвигия', price: 280, image: null }
+                ];
+            }
+
+            // Загрузка галереи
+            const adminGallery = localStorage.getItem('adminGallery');
+            if (adminGallery) {
+                galleryImages = JSON.parse(adminGallery)
+                    .filter(img => img.type === 'gallery')
+                    .slice(0, 6);
+            }
+
+            // Загружаем изображения для иконок функций
+            loadFeatureIcons();
+        }
+
+        // Загрузка изображений для иконок функций
+        function loadFeatureIcons() {
+            const adminGallery = localStorage.getItem('adminGallery');
+            if (adminGallery) {
+                const images = JSON.parse(adminGallery);
+
+                // Ищем подходящие изображения для иконок
+                const plantImages = images.filter(img => 
+                    img.name.toLowerCase().includes('plant') || 
+                    img.name.toLowerCase().includes('green') ||
+                    img.type === 'product'
+                );
+
+                if (plantImages.length >= 3) {
+                    document.getElementById('featureIcon1').innerHTML = 
+                        `<img src="${plantImages[0].data}" alt="Растения">`;
+
+                    if (plantImages[1]) {
+                        document.getElementById('featureIcon2').innerHTML = 
+                            `<img src="${plantImages[1].data}" alt="Качество">`;
+                    }
+
+                    if (plantImages[2]) {
+                        document.getElementById('featureIcon3').innerHTML = 
+                            `<img src="${plantImages[2].data}" alt="Доставка">`;
+                    }
+                }
+            }
+        }
+
+        // Загрузка настроек из localStorage
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('siteSettings');
+            if (savedSettings) {
+                siteSettings = { ...siteSettings, ...JSON.parse(savedSettings) };
+            }
+
+            const savedStats = localStorage.getItem('siteStats');
+            if (savedStats) {
+                siteStats = { ...siteStats, ...JSON.parse(savedStats) };
+            }
+        }
+
+        // Обновление контента сайта на основе настроек
+        function updateSiteContent() {
+            // Обновляем title и meta
+            document.getElementById('pageTitle').textContent = siteSettings.siteName;
+            document.getElementById('pageDescription').content = siteSettings.description;
+            document.getElementById('pageKeywords').content = siteSettings.keywords;
+
+            // Обновляем логотип и название
+            document.getElementById('siteLogo').textContent = siteSettings.logo;
+            document.getElementById('siteName').textContent = siteSettings.siteName.split(' - ')[0];
+
+            // Обновляем hero секцию
+            document.getElementById('heroTitle').textContent = siteSettings.heroTitle;
+            document.getElementById('heroSubtitle').textContent = siteSettings.heroSubtitle;
+            document.getElementById('ctaText').textContent = siteSettings.ctaText;
+
+            // Обновляем контактную информацию
+            updateContactInfo();
+
+            // Обновляем уведомление
+            document.getElementById('notificationText').textContent = siteSettings.notificationText;
+
+            // Загружаем популярные товары
+            loadPopularProducts();
+
+            // Загружаем галерею
+            loadGallery();
+        }
+
+        // Обновление контактной информации
+        function updateContactInfo() {
+            const emailElements = ['contactEmail', 'ordersEmail', 'footerEmail'];
+            emailElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = siteSettings.orderEmail;
+            });
+
+            const phoneElements = ['contactPhone', 'footerPhone'];
+            phoneElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = siteSettings.contactPhone;
+            });
+
+            const deliveryElements = ['deliveryRegionsText', 'footerDelivery'];
+            deliveryElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = siteSettings.deliveryRegions;
+            });
+
+            // Обновляем условия заказа
+            document.getElementById('minOrderAmount').textContent = `${siteSettings.minOrderAmount} ₽`;
+            document.getElementById('deliveryCost').textContent = `${siteSettings.deliveryCost} ₽`;
+
+            // Обновляем название сайта в футере
+            document.getElementById('footerSiteName').textContent = siteSettings.siteName.split(' - ')[0];
+        }
+
+        // Загрузка популярных товаров
+        function loadPopularProducts() {
+            const container = document.getElementById('productsPreview');
+            container.innerHTML = '';
+
+            popularProducts.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product-preview';
+                productElement.onclick = () => window.location.href = 'products.html';
+
+                productElement.innerHTML = `
+                    <div class="product-image">
+                        ${product.image ? 
+                            `<img src="${product.image}" alt="${product.name}">` :
+                            `<div class="product-image-placeholder">🌿</div>`
+                        }
+                    </div>
+                    <div class="product-preview-info">
+                        <h4>${product.name}</h4>
+                        <p class="price">От ${product.price} ₽</p>
+                    </div>
+                `;
+
+                container.appendChild(productElement);
+            });
+        }
+
+        // Загрузка галереи
+        function loadGallery() {
+            const container = document.getElementById('galleryGrid');
+
+            if (galleryImages.length === 0) {
+                // Показываем плейсхолдеры если нет изображений
+                const placeholders = [
+                    '🌿 Травник',
+                    '🌊 Природный стиль',
+                    '🍃 Голландский',
+                    '🌱 Ивагуми',
+                    '🍀 Джунгли',
+                    '🌾 Биотоп'
+                ];
+
+                container.innerHTML = placeholders.map(text => `
+                    <div class="gallery-item">
+                        <div class="gallery-placeholder">${text}</div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = galleryImages.map(image => `
+                    <div class="gallery-item">
+                        <img src="${image.data}" alt="${image.name}">
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Анимация статистики
+        function animateStats() {
+            const stats = [
+                { id: 'statProducts', value: siteStats.totalProducts },
+                { id: 'statOrders', value: siteStats.totalCustomers },
+                { id: 'statDelivery', value: siteStats.deliveryCountries },
+                { id: 'statExperience', value: siteStats.yearsExperience }
+            ];
+
+            stats.forEach(stat => {
+                animateNumber(stat.id, stat.value);
+            });
+        }
+
+        function animateNumber(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            const startValue = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * progress);
+
+                element.textContent = currentValue.toLocaleString();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            // Запускаем анимацию только когда элемент виден
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        requestAnimationFrame(animate);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+
+            observer.observe(element);
+        }
+
+        // Инициализация основных функций
+        function initializeFeatures() {
+            // Плавная прокрутка для якорных ссылок
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        updateActiveNavLink(this.getAttribute('href'));
+                    }
+                });
+            });
+
+            // Анимация при прокрутке
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Добавляем анимацию к элементам
+            document.querySelectorAll('.feature-card, .activity-item, .product-preview, .contact-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease-out';
+                observer.observe(el);
+            });
+
+            // Кнопка "Наверх"
+            window.addEventListener('scroll', handleScroll);
+
+            // Мобильное меню
+            updateMobileMenu();
+
+            // Автоматическое скрытие уведомления через 10 секунд
+            setTimeout(hideNotification, 10000);
+        }
+
+        // Обработка прокрутки
+        function handleScroll() {
+            const backToTop = document.getElementById('backToTop');
+
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+
+            // Обновление активной ссылки в навигации
+            updateActiveNavOnScroll();
+        }
+
+        // Обновление активной ссылки при прокрутке
+        function updateActiveNavOnScroll() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function updateActiveNavLink(href) {
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`a[href="${href}"]`).classList.add('active');
+        }
+
+        // Прокрутка наверх
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Мобильное меню
+        function updateMobileMenu() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('.mobile-menu-toggle').style.display = 'block';
+            } else {
+                document.querySelector('.mobile-menu-toggle').style.display = 'none';
+                document.getElementById('navLinks').classList.remove('mobile-open');
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('navLinks').classList.toggle('mobile-open');
+        }
+
+        // Скрытие уведомления
+        function hideNotification() {
+            const banner = document.getElementById('notificationBanner');
+            banner.style.transform = 'translateY(-100%)';
+            setTimeout(() => {
+                banner.classList.add('hidden');
+            }, 300);
+        }
+
+        // Показ спиннера загрузки
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        // API для обновления настроек из админки
+        window.updateSiteSettings = function(newSettings) {
+            siteSettings = { ...siteSettings, ...newSettings };
+            localStorage.setItem('siteSettings', JSON.stringify(siteSettings));
+            updateSiteContent();
+        };
+
+        window.updateSiteStats = function(newStats) {
+            siteStats = { ...siteStats, ...newStats };
+            localStorage.setItem('siteStats', JSON.stringify(siteStats));
+            animateStats();
+        };
+
+        // Обработка изменения размера окна
+        window.addEventListener('resize', function() {
+            updateMobileMenu();
+        });
+
+        // Обработка клика по товару
+        function redirectToProducts() {
+            showLoading();
+            setTimeout(() => {
+                window.location.href = 'products.html';
+            }, 500);
+        }
+
+        // Добавляем обработчики для всех товаров
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.product-preview')) {
+                redirectToProducts();
+            }
+        });
+
+        // Проверка обновлений данных каждые 10 секунд
+        setInterval(() => {
+            const currentProducts = localStorage.getItem('adminProducts');
+            const currentGallery = localStorage.getItem('adminGallery');
+
+            if (currentProducts || currentGallery) {
+                loadDataFromAdmin();
+                updateSiteContent();
+            }
+        }, 10000);
+
+        // Добавление пульсации к важным элементам
+        setInterval(() => {
+            const ctaButton = document.getElementById('ctaButton');
+            if (ctaButton) {
+                ctaButton.classList.add('pulse');
+                setTimeout(() => {
+                    ctaButton.classList.remove('pulse');
+                }, 2000);
+            }
+        }, 15000);
+
+        // Консольное сообщение для разработчиков
+        console.log('🐠 АкваСБор - Система управления сайтом с изображениями загружена');
+        console.log('Доступные API методы:');
+        console.log('- updateSiteSettings(settings)');
+        console.log('- updateSiteStats(stats)');
+    </script>
+</body>
+</html>
